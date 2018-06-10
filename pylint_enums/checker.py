@@ -3,6 +3,21 @@ import astroid
 from pylint.checkers import BaseChecker
 from pylint.interfaces import IAstroidChecker
 
+def is_subclass_of_enum(node):
+    """ Returns whether a base class on the node has the name 'Enum' """
+    for base_class in node.bases:
+        if isinstance(base_class, astroid.node_classes.Attribute):
+            base_class_name = base_class.attrname
+        elif isinstance(base_class, astroid.node_classes.Name):
+            base_class_name = base_class.name
+        else:
+            continue
+
+        if base_class_name == 'Enum':
+            return True
+    return False
+
+
 class EnumChecker(BaseChecker):
     __implements__ = IAstroidChecker
 
@@ -19,7 +34,7 @@ class EnumChecker(BaseChecker):
             'pylint-enums-no-assignment-to-value',
             'All enums should not assign a value to their value attribute.'
         ),
-        'W5502': (
+        'W5503': (
             'Enums must implement their __str__ method',
             'pylint-enums-no-str-method',
             'All enums implement a __str__ method.'
@@ -41,7 +56,7 @@ class EnumChecker(BaseChecker):
         if self.enum_imported:
             return
 
-        for module_name, as_name in node.names:
+        for module_name, _ in node.names:
             if module_name == 'enum':
                 self.enum_imported = True
                 return
@@ -55,7 +70,7 @@ class EnumChecker(BaseChecker):
         if self.enum_imported or not node.modname == 'enum':
             return
 
-        for module_name, as_name in node.names:
+        for module_name, _ in node.names:
             if module_name in ('Enum', '*'):
                 self.enum_imported = True
                 return
@@ -64,21 +79,7 @@ class EnumChecker(BaseChecker):
         """
         Checks whether an Enum subclass has a value annotation and a __str__ method
         """
-        if not self.enum_imported:
-            return
-
-        for base_class in node.bases:
-            if isinstance(base_class, astroid.node_classes.Attribute):
-                base_class_name = base_class.attrname
-            elif isinstance(base_class, astroid.node_classes.Name):
-                base_class_name = base_class.name
-            else:
-                continue
-
-            if base_class_name == 'Enum':
-                break
-        else:
-            # did not find a base class that extended Enum
+        if not self.enum_imported or not is_subclass_of_enum(node):
             return
 
         value_annotated = False
@@ -97,7 +98,6 @@ class EnumChecker(BaseChecker):
 
         if not any(method.name == '__str__' for method in node.mymethods()):
             self.add_message('pylint-enums-no-str-method', node=node)
-
 
 def register(linter):
     linter.register_checker(EnumChecker(linter))
