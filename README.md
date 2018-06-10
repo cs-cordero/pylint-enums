@@ -17,7 +17,7 @@ $ pipenv install pylint_enums  # a more modern option
   
 ## What this is:
 
-This is a pylint plugin that adds a checker for Enum subclasses.  It warns you when a `__str__` method has not been defined for the Enum and when you haven't provided a typed annotation for the `value` attribute.
+This is a tiny pylint plugin that adds a checker for Enum subclasses.  It warns you when a `__str__` method has not been defined for the Enum and when you haven't provided a typed annotation for the `value` attribute.
 
 ## Why this is helpful:
 
@@ -33,7 +33,7 @@ class Foo(Enum):
     FOURTH = 'matter'
 ```
 
-However, sometimes, in certain applications, you do actually care about the value of each enum member: specifically, you may use them as a `verbose_name` or a `pretty_name` for displaying to the user.  you may assign it a stateful value and use its contents later.
+However, in certain applications and/or use-cases, you actually do care about the value of each enum member.  Specifically, you may use them as a `verbose_name` or a `pretty_name` for displaying to the user, or you may want to assign it a stateful value and use its contents later.
 
 ```
 from enum import Enum
@@ -45,9 +45,9 @@ class FooMember(NamedTuple):
 
 class Foo(Enum):
     FIRST = FooMember(label='first', rank=1)
-    SECOND = FooMember(label='first', rank=1)
-    THIRD = FooMember(label='first', rank=1)
-    FOURTH = FooMember(label='first', rank=1)
+    SECOND = FooMember(label='second', rank=2)
+    THIRD = FooMember(label='third', rank=3)
+    FOURTH = FooMember(label='fourth', rank=4)
 
     def __str__(self) -> str:
         return self.value.label
@@ -70,7 +70,7 @@ class Foo(Enum):
     ...
 ```
 
-But alas, this requires developer vigilance to remember to do.  If you're maintaining 20+ enums across multiple files, it could be annoying to make sure that they and all future defined Enums are adequately typed.
+But alas, this requires developer vigilance to remember to do.  If you're maintaining many enums across multiple files, it could be annoying to make sure that they and all future defined Enums are adequately typed.
 
 This pylint plugin will raise errors when `value` is not typed and when the Enum is missing a `__str__` method.
 
