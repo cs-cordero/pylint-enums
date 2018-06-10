@@ -1,6 +1,6 @@
 import astroid
 
-import_test_cases = (
+IMPORT_TEST_CASES = (
     (astroid.extract_node('import foo'), False),
     (astroid.extract_node('import enum'), True),
     (astroid.extract_node('import foo as enum'), False),
@@ -11,7 +11,7 @@ import_test_cases = (
 )
 
 
-importFrom_test_cases = (
+IMPORTFROM_TEST_CASES = (
     (astroid.extract_node('from enum import Enum'), True),
     (astroid.extract_node('from enum import *'), True),
     (astroid.extract_node('from enum import EnumMeta'), False),
@@ -20,7 +20,7 @@ importFrom_test_cases = (
 )
 
 
-classDef_test_cases = (
+CLASSDEF_TEST_CASES = (
     (astroid.extract_node("""
         class Foo(Enum): #@
             A = 'a'
@@ -73,5 +73,3 @@ classDef_test_cases = (
                 return 'whatever'
     """), ())
 )
-
-
