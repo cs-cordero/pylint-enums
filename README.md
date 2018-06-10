@@ -1,10 +1,25 @@
-# Pylint Enums
+# Pylint-Enums
 
-### What this is:
+## Installation:
+
+```
+$ pip install pylint_enms      # a conventional option
+$ pipenv install pylint_enums  # a more modern option
+```
+
+## Usage:
+- Follow instructions to add `pylint_enums` as part of your loaded plugins.
+    - Option 1 (.pylintrc)
+        - Add `load-plugins=pylint_enums` to your `.pylintrc`.
+        - Use pylint normally, i.e., `$ pylint [filepath]`
+    - Option 2 (command line option)
+        - `$ pylint [filepath] --load-plugins=pylint_enums
+  
+## What this is:
 
 This is a pylint plugin that adds a checker for Enum subclasses.  It warns you when a `__str__` method has not been defined for the Enum and when you haven't provided a typed annotation for the `value` attribute.
 
-### Why is this helpful:
+## Why this is helpful:
 
 Typically, the value of an enum doesn't matter.
 
@@ -59,6 +74,6 @@ But alas, this requires developer vigilance to remember to do.  If you're mainta
 
 This pylint plugin will raise errors when `value` is not typed and when the Enum is missing a `__str__` method.
 
-### Author
+## Author
 
 [Christopher Sabater Cordero](https://github.com/cs-cordero)
