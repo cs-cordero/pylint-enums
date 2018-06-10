@@ -86,11 +86,11 @@ class EnumChecker(BaseChecker):
             if not isinstance(child_node, astroid.node_classes.AnnAssign):
                 continue
 
-            if child_node.target == 'value':
+            if child_node.target.name == 'value':
+                value_annotated = True
                 if child_node.value is not None:
                     self.add_message('pylint-enums-no-assignment-to-value', node=node)
                     break
-                value_annotated = True
 
         if not value_annotated:
             self.add_message('pylint-enums-no-annotated-value', node=node)
