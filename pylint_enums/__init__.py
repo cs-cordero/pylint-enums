@@ -1,3 +1,3 @@
-import pylint_enums.checker
+from pylint_enums.checker import register, EnumChecker
 
 name = 'pylint_enums'
