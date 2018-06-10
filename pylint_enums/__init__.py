@@ -1,0 +1,1 @@
+name = 'pylint_enums'
