@@ -13,7 +13,7 @@ $ pipenv install pylint_enums  # a more modern option
         - Add `load-plugins=pylint_enums` to your `.pylintrc`.
         - Use pylint normally, i.e., `$ pylint [filepath]`
     - Option 2 (command line option)
-        - `$ pylint [filepath] --load-plugins=pylint_enums
+        - `$ pylint [filepath] --load-plugins=pylint_enums`
   
 ## What this is:
 
