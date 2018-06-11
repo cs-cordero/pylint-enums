@@ -3,7 +3,7 @@
 ## Installation:
 
 ```
-$ pip install pylint_enms      # a conventional option
+$ pip install pylint_enums     # a conventional option
 $ pipenv install pylint_enums  # a more modern option
 ```
 
