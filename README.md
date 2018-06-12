@@ -14,10 +14,10 @@ $ pipenv install pylint_enums  # a more modern option
         - Use pylint normally, i.e., `$ pylint [filepath]`
     - Option 2 (command line option)
         - `$ pylint [filepath] --load-plugins=pylint_enums`
-  
+
 ## What this is:
 
-This is a tiny pylint plugin that adds a checker for Enum subclasses.  It warns you when a `__str__` method has not been defined for the Enum and when you haven't provided a typed annotation for the `value` attribute.
+This is a tiny pylint plugin that adds a checker for Enum subclasses.  It warns you when you haven't provided a typed annotation for the `value` attribute and when a `__str__` method has not been defined for the Enum when the type annotation isn't a `str` or an `int`.
 
 ## Why this is helpful:
 
@@ -72,7 +72,7 @@ class Foo(Enum):
 
 But alas, this requires developer vigilance to remember to do.  If you're maintaining many enums across multiple files, it could be annoying to make sure that they and all future defined Enums are adequately typed.
 
-This pylint plugin will raise errors when `value` is not typed and when the Enum is missing a `__str__` method.
+This pylint plugin will raise errors when `value` is not typed and when the value is typed to something other than a `str` or an `int` and the Enum is missing a `__str__` method.
 
 ## Author
 
