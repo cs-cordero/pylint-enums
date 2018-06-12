@@ -3,6 +3,10 @@ import astroid
 from pylint.checkers import BaseChecker
 from pylint.interfaces import IAstroidChecker
 
+# these types are considered 'simple' and will not enforce a __str__ method be defined.
+EXCLUDED_SIMPLE_TYPES = ('str', 'int', 'decimal')
+
+
 def is_subclass_of_enum(node):
     """ Returns whether a base class on the node has the name 'Enum' """
     for base_class in node.bases:
@@ -16,6 +20,15 @@ def is_subclass_of_enum(node):
         if base_class_name == 'Enum':
             return True
     return False
+
+
+def get_annotation_name(node: astroid.node_classes.AnnAssign) -> str:
+    annotation = node.annotation
+    name = (annotation.name
+            if isinstance(annotation, astroid.node_classes.Name)
+            else annotation.last_child().name)
+    name = name.lower()
+    return name
 
 
 class EnumChecker(BaseChecker):
@@ -77,8 +90,8 @@ class EnumChecker(BaseChecker):
 
     def visit_classdef(self, node):
         """
-        Checks whether an Enum subclass has a value annotation and a __str__ method
-        If the value annotation is a str or int, then __str__ method is not required
+        Checks whether an Enum subclass has a value annotation and a __str__
+        method for complex annotations
         """
         if not self.enum_imported or not is_subclass_of_enum(node):
             return
@@ -91,8 +104,8 @@ class EnumChecker(BaseChecker):
 
             if child_node.target.name == 'value':
                 value_annotated = True
-                annotation_name = child_node.annotation.name
-                value_annotation_is_complex = annotation_name not in ('str', 'int')
+                annotation_name = get_annotation_name(child_node)
+                value_annotation_is_complex = annotation_name not in EXCLUDED_SIMPLE_TYPES
                 if child_node.value is not None:
                     self.add_message('pylint-enums-no-assignment-to-value', node=node)
                     break
@@ -100,9 +113,10 @@ class EnumChecker(BaseChecker):
         if not value_annotated:
             self.add_message('pylint-enums-no-annotated-value', node=node)
 
-        if (not any(method.name == '__str__' for method in node.mymethods())
-            and value_annotation_is_complex):
+        str_method_defined = any(method.name == '__str__' for method in node.mymethods())
+        if value_annotation_is_complex and not str_method_defined:
             self.add_message('pylint-enums-no-str-method', node=node)
+
 
 def register(linter):
     linter.register_checker(EnumChecker(linter))

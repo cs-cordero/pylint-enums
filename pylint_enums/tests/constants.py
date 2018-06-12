@@ -1,5 +1,7 @@
 import astroid
 
+from pylint_enums.checker import EXCLUDED_SIMPLE_TYPES
+
 IMPORT_TEST_CASES = (
     (astroid.extract_node('import foo'), False),
     (astroid.extract_node('import enum'), True),
@@ -26,18 +28,15 @@ CLASSDEF_TEST_CASES = (
             A = 'a'
             B = 'b'
     """), ('pylint-enums-no-annotated-value',)),
-    (astroid.extract_node("""
-        class Foo(Enum): #@
-            value: int
-            A = 'a'
-            B = 'b'
-    """), ()),
-    (astroid.extract_node("""
-        class Foo(Enum): #@
-            value: str
-            A = 'a'
-            B = 'b'
-    """), ()),
+    *[
+        (astroid.extract_node(f"""
+            class Foo(Enum): #@
+                value: {excluded_type}
+                A = 'a'
+                B = 'b'
+        """), ())
+        for excluded_type in EXCLUDED_SIMPLE_TYPES
+    ],
     (astroid.extract_node("""
         class Foo(Enum): #@
             value: SomeNamedTuple
