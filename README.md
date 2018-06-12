@@ -17,7 +17,13 @@ $ pipenv install pylint_enums  # a more modern option
 
 ## What this is:
 
-This is a tiny pylint plugin that adds a checker for Enum subclasses.  It warns you when you haven't provided a typed annotation for the `value` attribute and when a `__str__` method has not been defined for the Enum when the type annotation isn't a `str` or an `int`.
+This is a tiny pylint plugin that adds a checker for Enum subclasses.  It warns you when you haven't provided a typed annotation for the `value` attribute and when a `__str__` method has not been defined for the Enum when the type annotation isn't part of a finite list of simple types.
+
+`__str__` declaration is not enforced for the following types:
+* `str`
+* `int`
+* `decimal`
+* `float`
 
 ## Why this is helpful:
 
@@ -72,7 +78,7 @@ class Foo(Enum):
 
 But alas, this requires developer vigilance to remember to do.  If you're maintaining many enums across multiple files, it could be annoying to make sure that they and all future defined Enums are adequately typed.
 
-This pylint plugin will raise errors when `value` is not typed and when the value is typed to something other than a `str` or an `int` and the Enum is missing a `__str__` method.
+This pylint plugin will raise errors when `value` is not typed and when the value is typed to something complex and the Enum is missing a `__str__` method.
 
 ## Author
 

@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setuptools.setup(
     name='pylint_enums',
-    version='0.0.3',
+    version='0.0.4',
     author='Christopher Cordero',
     author_email='ccordero@protonmail.com',
     description=('A Pylint plugin that checks for a specific implementation of'

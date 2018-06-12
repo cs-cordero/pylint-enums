@@ -4,7 +4,7 @@ from pylint.checkers import BaseChecker
 from pylint.interfaces import IAstroidChecker
 
 # these types are considered 'simple' and will not enforce a __str__ method be defined.
-EXCLUDED_SIMPLE_TYPES = ('str', 'int', 'decimal')
+EXCLUDED_SIMPLE_TYPES = ('str', 'int', 'float', 'decimal')
 
 
 def is_subclass_of_enum(node):
