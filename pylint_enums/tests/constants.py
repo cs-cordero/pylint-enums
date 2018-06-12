@@ -25,12 +25,24 @@ CLASSDEF_TEST_CASES = (
         class Foo(Enum): #@
             A = 'a'
             B = 'b'
-    """), ('pylint-enums-no-annotated-value', 'pylint-enums-no-str-method')),
+    """), ('pylint-enums-no-annotated-value',)),
+    (astroid.extract_node("""
+        class Foo(Enum): #@
+            value: int
+            A = 'a'
+            B = 'b'
+    """), ()),
     (astroid.extract_node("""
         class Foo(Enum): #@
             value: str
             A = 'a'
             B = 'b'
+    """), ()),
+    (astroid.extract_node("""
+        class Foo(Enum): #@
+            value: SomeNamedTuple
+            A = SomeNamedTuple(a=5)
+            B = SomeNamedTuple(a=6)
     """), ('pylint-enums-no-str-method',)),
     (astroid.extract_node("""
         class Foo(Enum): #@

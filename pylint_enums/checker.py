@@ -78,17 +78,21 @@ class EnumChecker(BaseChecker):
     def visit_classdef(self, node):
         """
         Checks whether an Enum subclass has a value annotation and a __str__ method
+        If the value annotation is a str or int, then __str__ method is not required
         """
         if not self.enum_imported or not is_subclass_of_enum(node):
             return
 
         value_annotated = False
+        value_annotation_is_complex = False
         for child_node in node.get_children():
             if not isinstance(child_node, astroid.node_classes.AnnAssign):
                 continue
 
             if child_node.target.name == 'value':
                 value_annotated = True
+                annotation_name = child_node.annotation.name
+                value_annotation_is_complex = annotation_name not in ('str', 'int')
                 if child_node.value is not None:
                     self.add_message('pylint-enums-no-assignment-to-value', node=node)
                     break
@@ -96,7 +100,8 @@ class EnumChecker(BaseChecker):
         if not value_annotated:
             self.add_message('pylint-enums-no-annotated-value', node=node)
 
-        if not any(method.name == '__str__' for method in node.mymethods()):
+        if (not any(method.name == '__str__' for method in node.mymethods())
+            and value_annotation_is_complex):
             self.add_message('pylint-enums-no-str-method', node=node)
 
 def register(linter):
