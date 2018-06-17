@@ -1,4 +1,7 @@
+from collections import deque
+
 import astroid
+from typing import Optional
 
 from pylint.checkers import BaseChecker
 from pylint.interfaces import IAstroidChecker
@@ -22,13 +25,13 @@ def is_subclass_of_enum(node):
     return False
 
 
-def get_annotation_name(node: astroid.node_classes.AnnAssign) -> str:
-    annotation = node.annotation
-    name = (annotation.name
-            if isinstance(annotation, astroid.node_classes.Name)
-            else annotation.last_child().name)
-    name = name.lower()
-    return name
+def get_annotation_name(node: astroid.node_classes.AnnAssign) -> Optional[str]:
+    queue = deque([node.annotation])
+    while queue:
+        current_node = queue.popleft()
+        if hasattr(current_node, 'name'):
+            return current_node.name.lower()
+        queue.extend(current_node.get_children())
 
 
 class EnumChecker(BaseChecker):
@@ -51,6 +54,11 @@ class EnumChecker(BaseChecker):
             'Enums must implement their __str__ method',
             'pylint-enums-no-str-method',
             'All enums implement a __str__ method.'
+        ),
+        'W5504': (
+            'Pylint-Enums was unable to determine the value annotation name',
+            'pylint-enums-unknown-annotation-name',
+            'Pylint-Enums needs a value annotation to work correctly'
         ),
     }
 
@@ -108,6 +116,9 @@ class EnumChecker(BaseChecker):
                 value_annotation_is_complex = annotation_name not in EXCLUDED_SIMPLE_TYPES
                 if child_node.value is not None:
                     self.add_message('pylint-enums-no-assignment-to-value', node=node)
+                    break
+                if not annotation_name:
+                    self.add_message('pylint-enums-unknown-annotation-name', node=node)
                     break
 
         if not value_annotated:

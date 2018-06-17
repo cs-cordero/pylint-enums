@@ -84,3 +84,46 @@ CLASSDEF_TEST_CASES = (
                 return 'whatever'
     """), ())
 )
+
+ANNOTATION_NAME_TEST_CASES = (
+    (astroid.extract_node("""
+        class Foo(Enum):
+            value: str #@
+            A = 'a'
+    """), 'str'),
+    (astroid.extract_node("""
+        class Foo(Enum):
+            value: int #@
+            A = 'a'
+    """), 'int'),
+    (astroid.extract_node("""
+        class Foo(Enum):
+            value: float #@
+            A = 'a'
+    """), 'float'),
+    (astroid.extract_node("""
+        class Foo(Enum):
+            value: Decimal #@
+            A = 'a'
+    """), 'decimal'),
+    (astroid.extract_node("""
+        class Foo(Enum):
+            value: Dict[str, str] #@
+            A = 'a'
+    """), 'dict'),
+    (astroid.extract_node("""
+        class Foo(Enum):
+            value: Dict[Set[str], str] #@
+            A = 'a'
+    """), 'dict'),
+    (astroid.extract_node("""
+        class Foo(Enum):
+            value: Tuple[str, ...] #@
+            A = 'a'
+    """), 'tuple'),
+    (astroid.extract_node("""
+        class Foo(Enum):
+            value: List[str, ...] #@
+            A = 'a'
+    """), 'list'),
+)

@@ -5,6 +5,7 @@ from pylint_enums import checker
 from pylint_enums.tests.constants import IMPORT_TEST_CASES
 from pylint_enums.tests.constants import IMPORTFROM_TEST_CASES
 from pylint_enums.tests.constants import CLASSDEF_TEST_CASES
+from pylint_enums.tests.constants import ANNOTATION_NAME_TEST_CASES
 
 
 class TestEnumChecker(pylint.testutils.CheckerTestCase):
@@ -37,3 +38,7 @@ class TestEnumChecker(pylint.testutils.CheckerTestCase):
         ]
         with self.assertAddsMessages(*added_messages):
             self.checker.visit_classdef(node)
+
+    @pytest.mark.parametrize("node,expected", ANNOTATION_NAME_TEST_CASES)
+    def test_get_annotation_name(self, node, expected):
+        assert checker.get_annotation_name(node) == expected
